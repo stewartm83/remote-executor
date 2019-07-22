@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  remoteexecutor:
+    image: ${DOCKER_REGISTRY-}remoteexecutor
+    build:
+      context: .
+      dockerfile: RemoteExecutor/Dockerfile

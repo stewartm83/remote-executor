@@ -1,13 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RemoteExecutor.Lib;
 
 namespace RemoteExecutor.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class CommandsController : ControllerBase
     {
 
@@ -17,37 +15,30 @@ namespace RemoteExecutor.Controllers
             return new string[] { "values 1", "values 2" };
         }
 
-
-
         // POST api/commands
         [HttpPost]
-        public string Post(string name, string arguments)
+        public string Post(string command)
         {
-            string result;
-            try
+            switch (command)
             {
-                var process = new Process()
-                {
-                    StartInfo = new ProcessStartInfo(name, arguments)
-                    {
-
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                    }
-                };
-
-                process.Start();
-                result = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                case "docker":
+                    return RunDocker();
+                case "list":
+                    return RunListDir();
+                default:
+                    return RunListDir();
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
         }
 
+        private string RunDocker()
+        {
+            return ShellCommands.ExecuteCommand("docker", "build --help");
+        }
+
+        private string RunListDir()
+        {
+            return ShellCommands.ExecuteCommand("ls", "--lah");
+        }
     }
+
 }
