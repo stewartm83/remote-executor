@@ -3,27 +3,26 @@ using System.Diagnostics;
 
 namespace RemoteExecutor.Lib
 {
-    public static class ShellCommands 
+    public static class ShellCommands
     {
         public static string ExecuteCommand(string name, string arguments)
         {
             string result;
             try
             {
-                var process = new Process()
+                var startInfo = new ProcessStartInfo(name, arguments)
                 {
-                    StartInfo = new ProcessStartInfo(name, arguments)
-                    {
-
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                    }
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                 };
 
-                process.Start();
-                result = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                using (var process = Process.Start(startInfo))
+                {
+                    result = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                };
             }
             catch (Exception ex)
             {

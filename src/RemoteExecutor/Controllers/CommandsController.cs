@@ -8,13 +8,6 @@ namespace RemoteExecutor.Controllers
     [ApiController]
     public class CommandsController : ControllerBase
     {
-
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "values 1", "values 2" };
-        }
-
         // POST api/commands
         [HttpPost]
         public string Post(string command)
@@ -25,8 +18,10 @@ namespace RemoteExecutor.Controllers
                     return RunDocker();
                 case "list":
                     return RunListDir();
+                case "python":
+                    return RunPythonScript();
                 default:
-                    return RunListDir();
+                    return RunPythonScript();
             }
         }
 
@@ -38,6 +33,11 @@ namespace RemoteExecutor.Controllers
         private string RunListDir()
         {
             return ShellCommands.ExecuteCommand("ls", "--lah");
+        }
+
+        private string RunPythonScript()
+        {
+            return ShellCommands.ExecuteCommand("python", "python2json.py");
         }
     }
 
